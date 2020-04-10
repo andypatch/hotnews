@@ -1,5 +1,4 @@
-import 'package:hotnews/screens/cart.dart';
-import 'package:hotnews/screens/catalog.dart';
+
 import 'package:hotnews/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
