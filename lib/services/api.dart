@@ -10,7 +10,7 @@ const TOKEN = '116645e222bc47e2ada73c969299197d';
 const endpoint = 'https://newsapi.org/v2/';
 const TOP_HEADLINES = 'top-headlines';
 const API = '';
-
+///
 class Api {
   Future<void> fetchArticles(
       {@required BuildContext context, String category}) async {
