@@ -16,6 +16,7 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   final List<Tab> myTabs = <Tab>[
+    Tab(icon: Icon(Icons.search)),
     Tab(text: 'Recenti'),
     Tab(text: 'Italia'),
     Tab(text: 'Mondo'),
@@ -40,6 +41,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         bottom: TabBar(
+          indicatorWeight: 1,
           controller: _tabController,
           tabs: myTabs,
         ),
