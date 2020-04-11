@@ -6,14 +6,15 @@ import 'package:provider/provider.dart';
 
 class ArticlesRepo extends ChangeNotifier {
   
+  final List<Article> _articles = [];
+  final Map<String, List<Article>> _articlesMap = Map();
+
   ArticlesRepo(){
 
     Api().getHeadlines().then((value) => articles = value);
 
   }
 
-  final List<Article> _articles = [];
-  final Map<String, List<Article>> _articlesMap = Map();
   set articles(List<Article> news) {
     assert(news != null);
 

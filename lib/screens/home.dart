@@ -17,7 +17,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   final List<Tab> myTabs = <Tab>[
     Tab(icon: Icon(Icons.search)),
-    Tab(text: 'Recenti'),
+    Tab(text: 'Top'),
     Tab(text: 'Italia'),
     Tab(text: 'Mondo'),
   ];
@@ -50,13 +50,10 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
         controller: _tabController,
         children: myTabs.map((Tab tab) {
           return Center(
-            child: Consumer<ArticlesRepo>(builder: (context, news, child) {
-              return ListView.builder(
-                  itemCount: news.articles.length,
-                  itemBuilder: (context, position) => Text(
-                        news.articles[position].title,
-                      ));
-            }),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: listNewCreator(),
+            ),
           );
         }).toList(),
       ),
@@ -78,6 +75,23 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Widget listNewCreator() {
+    return Consumer<ArticlesRepo>(builder: (context, news, child) {
+      return ListView.builder(
+          itemCount: news.articles.length,
+          itemBuilder: (context, position) => Card(
+                elevation: 4,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  child: Text(
+                    news.articles[position].title,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ));
+    });
   }
 }
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:hotnews/models/article.dart';
 import 'package:http/http.dart' as http;
@@ -6,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hotnews/models/articlesRepo.dart';
 
-const TOKEN = '116645e222bc47e2ada73c969299197d';
-const endpoint = 'https://newsapi.org/v2/';
+const APIKEY = '116645e222bc47e2ada73c969299197d';
+const HOSTNAME = 'https://newsapi.org/v2/';
 const TOP_HEADLINES = 'top-headlines';
-const API = '';
+
 ///
 class Api {
   Future<void> fetchArticles(
@@ -17,14 +18,14 @@ class Api {
     var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
     var client = http.Client();
     final response =
-        await client.get(_buildUrl(endpoint + TOP_HEADLINES, category: category));
+        await client.get(_buildUrl(TOP_HEADLINES, category: category));
     List<Article> news = await compute(_parseArticle, response.body);
     articlesHolder.addToArticlesMap(category, news);
   }
 
   Future<List<Article>> getHeadlines() async {
     var client = http.Client();
-    final response = await client.get(_buildUrl(endpoint + TOP_HEADLINES));
+    final response = await client.get(_buildUrl(TOP_HEADLINES));
     return await compute(_parseArticle, response.body);
   }
 
@@ -36,11 +37,13 @@ class Api {
   }
 
   String _buildUrl(String endpoint, {String category}) {
-    String url = '$API$endpoint?country=it';
+    String url = '$HOSTNAME$endpoint?country=it';
     if (category != null) {
       url += '&category=$category';
     }
-    return '$url&apiKey=$TOKEN';
+    log('preparade url $url&apiKey=$APIKEY');
+    return '$url&apiKey=$APIKEY';
+    
   }
 }
 
