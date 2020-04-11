@@ -85,31 +85,18 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                 elevation: 4,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: Text(
-                    news.articles[position].title,
-                    style: TextStyle(fontSize: 16),
+                  child: Column(
+                    children: <Widget>[
+                      Image(image: NetworkImage(news.articles[position].urlToImage)) ,
+                      Text(
+                        news.articles[position].title,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                     
+                    ],
                   ),
                 ),
               ));
     });
   }
 }
-
-// class MyHome extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Container(
-//         child: new Center(
-//           child: Consumer<ArticlesRepo>(builder: (context, news, child) {
-//             return ListView.builder(
-//                 itemCount: news.articles.length,
-//                 itemBuilder: (context, position) => Text(
-//                       news.articles[position].title,
-//                     ));
-//           }),
-//         ),
-//       ),
-//     );
-//   }
-// }
