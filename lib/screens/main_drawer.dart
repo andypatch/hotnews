@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:hotnews/models/articlesRepo.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
     return Drawer(
         child: Column(
       children: <Widget>[
@@ -60,7 +63,7 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           onTap: () {
-                
+                articlesHolder.cleanPrefs();
           }
         ),        
         ListTile(
@@ -75,4 +78,6 @@ class MainDrawer extends StatelessWidget {
       ],
     ));
   }
+
+
 }

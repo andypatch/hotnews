@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'package:hotnews/models/article.dart';
 import 'package:hotnews/models/articlesRepo.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hotnews/screens/main_drawer.dart';
 import 'package:hotnews/screens/news_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:hotnews/services/api.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hotnews/screens/main_drawer.dart';
+
 
 class MyHome extends StatefulWidget {
   const MyHome({Key key}) : super(key: key);
@@ -131,7 +129,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                       ),
                       GestureDetector(
                         onTap: () {
-                          manageFav(news.getArticles(tabcategory)[position]);
+                          news.manageFavMap(news.getArticles(tabcategory)[position]);
                         },
                         child: manageFavIcons(
                             news, news.getArticles(tabcategory)[position]),
@@ -149,39 +147,37 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     });
   }
 
-  Future manageFav(Article favSelected) async {
-    final SharedPreferences prefs = await _prefs;
-    var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
-    // check exists
+  // Future manageFav(Article favSelected) async {
+  //   final SharedPreferences prefs = await _prefs;
+  //   var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
+  //   // check exists
 
-    String check = prefs.getString(favSelected.url) ?? 'not available';
-    print('################################# shared pref check ${favSelected.title} => $check');
-    if (prefs.getString(favSelected.url) == null) {
-      prefs
-          .setString(favSelected.url, json.encode(favSelected))
-          .then((bool success) {
-        print(
-            '################################# shared pref saved ${favSelected.title}');
+  //   String check = prefs.getString(favSelected.url) ?? 'not available';
+  //   print('################################# shared pref check ${favSelected.title} => $check');
+  //   if (prefs.getString(favSelected.url) == null) {
+  //     prefs
+  //         .setString(favSelected.url, json.encode(favSelected))
+  //         .then((bool success) {
+  //       print(
+  //           '################################# shared pref saved ${favSelected.title}');
         
-        articlesHolder.addToFavArticles(favSelected);
-      });
-    }
-    else
-    {
-        articlesHolder.removeFavArticles(favSelected);
-    }
-  }
+  //       articlesHolder.addToFavArticles(favSelected);
+  //     });
+  //   }
+  //   else
+  //   {
+  //       articlesHolder.removeFavArticles(favSelected);
+  //   }
+  // }
 
   Widget manageFavIcons(ArticlesRepo mynews, Article current) {
-    for (var i = 0; i < mynews.favArticles.length; i++) {
-      if (mynews.favArticles[i].url == current.url) {
-        return Icon(
-          Icons.favorite,
-          color: Colors.red,
-        );
-      }
-    }
+    
+    if (mynews.favArticlesMap.containsKey(current.url))
+      return  Icon(Icons.favorite,color: Colors.red,);
+    else
+      return  Icon(Icons.favorite_border);
 
-    return Icon(Icons.favorite_border);
+
+    
   }
 }

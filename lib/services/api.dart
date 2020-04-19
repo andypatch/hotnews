@@ -22,8 +22,8 @@ class Api {
     print(response);
     List<Article> news = await compute(_parseArticle, response.body);
     articlesHolder.addToArticlesMap(category, news);
-    if (articlesHolder.favArticles.length == 0) {
-      articlesHolder.loadFavourites();
+    if (articlesHolder.favArticlesMap.length == 0) {
+      articlesHolder.loadFavouritesMap();
     }
   }
 

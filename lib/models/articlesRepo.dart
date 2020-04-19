@@ -10,13 +10,12 @@ class ArticlesRepo extends ChangeNotifier {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   
   final List<Article> _articles = [];
-  final List<Article> _favArticles = [];
   final Map<String, List<Article>> _articlesMap = Map();
   final HashMap<String, Article> _favArticlesMap = HashMap();
 
   ArticlesRepo(BuildContext context){
     //Api().getHeadlines().then((value) => articles = value);
-    loadFavourites();
+    loadFavouritesMap();
   }
 
   set articles(List<Article> news) {
@@ -34,30 +33,64 @@ class ArticlesRepo extends ChangeNotifier {
   
   List<Article> getArticles(String category) => _articlesMap[category];
   List<Article> get articles => _articles;
-  List<Article> get favArticles => _favArticles;
+  HashMap get favArticlesMap => _favArticlesMap;
   
-  
-  void addToFavArticles(Article favArt) {
-    _favArticles.add(favArt);
+  manageFavMap(Article favObj){
+    if (_favArticlesMap.containsKey(favObj.url))
+    {
+      _favArticlesMap.remove(favObj.url);
+    }
+    else
+    {
+      _favArticlesMap.putIfAbsent(favObj.url, () => favObj);
+    }
     notifyListeners();
+    preferencesUpdate(favObj);
   }
 
-  Future<void> loadFavourites() async  {
+  // void addToFavArticles(Article favArt) {
+  //   _favArticles.add(favArt);
+  //   notifyListeners();
+  // }
+
+  // Future<void> loadFavourites() async  {
+  //     final SharedPreferences prefs = await _prefs;
+  //     for (var item in prefs.getKeys()) {
+  //       print(item);
+  //       String myPref=prefs.getString(item);
+  //       Map articleMap = jsonDecode(myPref);
+  //       Article a = Article.fromJson(articleMap);
+  //       addToFavArticles(a);
+  //     }
+  // }
+
+  Future<void> loadFavouritesMap() async  {
       final SharedPreferences prefs = await _prefs;
       for (var item in prefs.getKeys()) {
         print(item);
-        String myPref=prefs.getString(item);
-        Map articleMap = jsonDecode(myPref);
-        Article a = Article.fromJson(articleMap);
-        addToFavArticles(a);
+        Map articleMap = jsonDecode(prefs.getString(item));
+        _favArticlesMap[item] =  Article.fromJson(articleMap);
       }
-  }
+  }  
 
-  void removeFavArticles(Article favSelected) {
-     
-      _favArticles.removeWhere((item) => item.url == favSelected.url);
-      print('item ${favSelected.url} removed!');
-      notifyListeners();
+  // void removeFavArticles(Article favSelected) {
+  //     _favArticles.removeWhere((item) => item.url == favSelected.url);
+  //     print('item ${favSelected.url} removed!');
+  //     notifyListeners();
+  // }
+
+  void preferencesUpdate(Article favObj) async{
+    final SharedPreferences prefs = await _prefs;
+    prefs.containsKey(favObj.url) ? prefs.remove(favObj.url) : prefs.setString(favObj.url, json.encode(favObj));
+  }    
+
+  void cleanPrefs() async{
+      final SharedPreferences prefs = await _prefs;
+      prefs.clear().then((value) {
+        _favArticlesMap.clear();
+        notifyListeners(); 
+
+        });
   }
 
 }
