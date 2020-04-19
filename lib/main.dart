@@ -16,10 +16,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //  Using MultiProvider is convenient when providing multiple objects.
     return ChangeNotifierProvider(
-      create: (context) => ArticlesRepo(),
+      create: (context) => ArticlesRepo(context),
       child: MaterialApp(
         title: 'HotNews',
-        theme: appTheme,
+        theme: ThemeData.light(),
         initialRoute: '/',
         routes: {
           //'/': (context) => MyLogin(),

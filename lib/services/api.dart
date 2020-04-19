@@ -19,8 +19,12 @@ class Api {
     var client = http.Client();
     final response =
         await client.get(_buildUrl(TOP_HEADLINES, category: category));
+    print(response);
     List<Article> news = await compute(_parseArticle, response.body);
     articlesHolder.addToArticlesMap(category, news);
+    if (articlesHolder.favArticles.length == 0) {
+      articlesHolder.loadFavourites();
+    }
   }
 
   Future<List<Article>> getHeadlines() async {
@@ -43,7 +47,6 @@ class Api {
     }
     log('preparade url $url&apiKey=$APIKEY');
     return '$url&apiKey=$APIKEY';
-    
   }
 }
 
