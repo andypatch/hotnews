@@ -4,7 +4,7 @@ import 'package:hotnews/models/article.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class NewsDetail extends StatelessWidget {
-  Article articleSelected;
+  final Article articleSelected;
 
   NewsDetail(this.articleSelected) ;
 

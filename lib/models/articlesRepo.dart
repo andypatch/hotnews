@@ -12,6 +12,8 @@ class ArticlesRepo extends ChangeNotifier {
   final List<Article> _articles = [];
   final Map<String, List<Article>> _articlesMap = Map();
   final HashMap<String, Article> _favArticlesMap = HashMap();
+  bool _onlyFav=false;
+
 
   ArticlesRepo(BuildContext context){
     //Api().getHeadlines().then((value) => articles = value);
@@ -31,7 +33,26 @@ class ArticlesRepo extends ChangeNotifier {
     notifyListeners();
   }
   
-  List<Article> getArticles(String category) => _articlesMap[category];
+  bool get onlyFav => _onlyFav;
+  void set onlyFav(bool value) {
+    _onlyFav = value;
+    notifyListeners();
+  }
+
+  List<Article> getArticles(String category){
+     if (!_onlyFav){
+       return _articlesMap[category];
+     }
+     else
+     {
+        final List<Article> tempFavList = [];
+        _favArticlesMap.forEach((k,v) {  
+            tempFavList.add(v);
+        });
+        
+        return tempFavList;
+     }
+  }
   List<Article> get articles => _articles;
   HashMap get favArticlesMap => _favArticlesMap;
   
@@ -48,22 +69,6 @@ class ArticlesRepo extends ChangeNotifier {
     preferencesUpdate(favObj);
   }
 
-  // void addToFavArticles(Article favArt) {
-  //   _favArticles.add(favArt);
-  //   notifyListeners();
-  // }
-
-  // Future<void> loadFavourites() async  {
-  //     final SharedPreferences prefs = await _prefs;
-  //     for (var item in prefs.getKeys()) {
-  //       print(item);
-  //       String myPref=prefs.getString(item);
-  //       Map articleMap = jsonDecode(myPref);
-  //       Article a = Article.fromJson(articleMap);
-  //       addToFavArticles(a);
-  //     }
-  // }
-
   Future<void> loadFavouritesMap() async  {
       final SharedPreferences prefs = await _prefs;
       for (var item in prefs.getKeys()) {
@@ -73,11 +78,6 @@ class ArticlesRepo extends ChangeNotifier {
       }
   }  
 
-  // void removeFavArticles(Article favSelected) {
-  //     _favArticles.removeWhere((item) => item.url == favSelected.url);
-  //     print('item ${favSelected.url} removed!');
-  //     notifyListeners();
-  // }
 
   void preferencesUpdate(Article favObj) async{
     final SharedPreferences prefs = await _prefs;

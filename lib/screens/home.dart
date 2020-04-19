@@ -46,8 +46,19 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  void _onItemTapped(int index) {
+    var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);      
+    index==0 ? articlesHolder.onlyFav=false : articlesHolder.onlyFav=true;
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
+      
     return Scaffold(
       appBar: AppBar(
         title: Text('Hot News'),
@@ -72,15 +83,8 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (currentIndex) {
-          setState(() {
-            _currentIndex = currentIndex;
-          });
-          _tabController.animateTo(_currentIndex);
-        },
+        onTap: _onItemTapped,
         items: [
-          BottomNavigationBarItem(
-              title: Text("For you"), icon: Icon(Icons.airplanemode_active)),
           BottomNavigationBarItem(
               title: Text("News"), icon: Icon(Icons.new_releases)),
           BottomNavigationBarItem(
