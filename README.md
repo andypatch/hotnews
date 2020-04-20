@@ -1,6 +1,6 @@
 # hotnews
 
-A new Flutter project.
+HotNews Flutter project.
 
 ## Getting Started
 
