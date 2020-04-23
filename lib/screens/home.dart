@@ -6,6 +6,7 @@ import 'package:hotnews/screens/main_drawer.dart';
 import 'package:hotnews/screens/news_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:hotnews/services/api.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -29,6 +30,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     Tab(text: 'Health'),
     Tab(text: 'Technology'),
   ];
+
   TabController _tabController;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Icon _searchIcon = new Icon(Icons.search);
@@ -80,14 +82,17 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);        
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
+
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
+          cursorColor: Colors.white ,
           controller: _filter,
           decoration: new InputDecoration(
             prefixIcon: new Icon(Icons.search),
             hintText: 'Search...'
           ),
         );
+
       } else {
         this._searchIcon = new Icon(Icons.search);
         this._appBarTitle = new Text( 'HotNews' );
@@ -107,12 +112,12 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
         leading: new IconButton(
             icon: _searchIcon,
             onPressed: _searchPressed,
-      ),        
-        bottom: TabBar(
+            ),        
+        bottom: this._searchIcon.icon == Icons.search ? TabBar(
           indicatorWeight: 2,
           controller: _tabController,
-          tabs: myTabs,
-        ),
+          tabs:  myTabs,
+        ) : null,
       ),
       
       //drawer:MainDrawer(),
@@ -237,6 +242,24 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                             style:
                                 TextStyle(fontSize: 16, color: Colors.black45)),
                       ),
+                     SizedBox(width: 15,), 
+                      Builder(
+                        builder: (BuildContext context) {
+                          return 
+                            GestureDetector(
+                              onTap: () {
+                                final RenderBox box = context.findRenderObject();
+                                Share.share(news.getArticles(tabcategory)[position].url,
+                                    subject: 'News sharing',
+                                    sharePositionOrigin:
+                                        box.localToGlobal(Offset.zero) &
+                                            box.size);
+                              },
+                              child: Icon( Icons.share),
+                            );
+                        },
+                      ),                     
+                      SizedBox(width: 15,),
                       GestureDetector(
                         onTap: () {
                           news.manageFavMap(news.getArticles(tabcategory)[position]);
@@ -264,8 +287,5 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       return  Icon(Icons.favorite,color: Colors.red,);
     else
       return  Icon(Icons.favorite_border);
-
-
-    
   }
 }

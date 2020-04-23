@@ -43,11 +43,11 @@ class ArticlesRepo extends ChangeNotifier {
        {
          if (searchText=='')
          {
-            return [_articlesMap['general'], _articlesMap['health'], _articlesMap['health']].expand((x) => x).toList();
+            return [_articlesMap['general'], _articlesMap['health'], _articlesMap['technology']].expand((x) => x).toList();
          }
          else // filtro su searhc string
          {
-            List<Article> allItems = [_articlesMap['general'], _articlesMap['health'], _articlesMap['health']].expand((x) => x).toList();
+            List<Article> allItems = [_articlesMap['general'], _articlesMap['health'], _articlesMap['technology']].expand((x) => x).toList();
             List<Article> founds=[];
             for (int i = 0; i < allItems.length; i++) {
               if (allItems[i].title.toLowerCase().contains(searchText.toLowerCase())) {

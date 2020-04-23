@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => ArticlesRepo(context),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'HotNews',
         theme: ThemeData.light(),
         initialRoute: '/',
