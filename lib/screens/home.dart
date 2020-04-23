@@ -17,6 +17,11 @@ class MyHome extends StatefulWidget {
 
 
 class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
+  
+  Widget _appBarTitle = new Text( 'HotNews' );
+  final TextEditingController _filter = new TextEditingController();
+  String _searchText = "";
+  
   int _currentIndex = 0;
   final List<Tab> myTabs = <Tab>[
     //Tab(icon: Icon(Icons.search)),
@@ -24,10 +29,27 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     Tab(text: 'Health'),
     Tab(text: 'Technology'),
   ];
-
   TabController _tabController;
-
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Icon _searchIcon = new Icon(Icons.search);
+  List filteredNames = new List();  
+  
+  _MyHomeState(){
+    _filter.addListener(() {
+        // recupero  oggetto lista da articlerepo map
+        var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);        
+        if (_filter.text.isEmpty) {
+          setState(() {
+            _searchText = "";
+            filteredNames = articlesHolder.getArticles('all');
+          });
+        } else {
+          setState(() {
+            _searchText = _filter.text;
+          });
+        }
+      });
+  }
 
   @override
   void initState() {
@@ -54,29 +76,54 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     });
   }
 
-
+  void _searchPressed() {
+    var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);        
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          controller: _filter,
+          decoration: new InputDecoration(
+            prefixIcon: new Icon(Icons.search),
+            hintText: 'Search...'
+          ),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text( 'HotNews' );
+        filteredNames = articlesHolder.getArticles('all');
+        _filter.clear();
+      }
+    });
+  }  
 
   @override
   Widget build(BuildContext context) {
       
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hot News'),
+        title: _appBarTitle,
         centerTitle: true,
+        leading: new IconButton(
+            icon: _searchIcon,
+            onPressed: _searchPressed,
+      ),        
         bottom: TabBar(
           indicatorWeight: 2,
           controller: _tabController,
           tabs: myTabs,
         ),
       ),
-      drawer:MainDrawer(),
+      
+      //drawer:MainDrawer(),
+      
       body: TabBarView(
         controller: _tabController,
         children: myTabs.map((Tab tab) {
           return Center(
             child: Padding(
               padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: listNewCreator(tab.text.toLowerCase()),
+              child: _searchText == '' ? listNewCreator(tab.text.toLowerCase()) : listSearchCreator('all'),
             ),
           );
         }).toList(),
@@ -92,6 +139,65 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  /// method used to build the search result
+  Widget listSearchCreator(var tabcategory) {
+    
+    return Consumer<ArticlesRepo>(builder: (context, news, child) {
+      List<Article> localSearch = news.getArticles(tabcategory, searchText: _searchText);
+      if ( LocalHistoryEntry != null) {
+        return ListView.builder(
+          itemCount: localSearch.length,
+          itemBuilder: (context, position) => Card(
+            elevation: 4,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Column(
+                children: <Widget>[
+                  new GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NewsDetail(
+                                  localSearch[position])));
+                    },
+                    child: localSearch[position]
+                            .urlToImage != null ? Image(
+                        image: NetworkImage(
+                            localSearch[position]
+                            .urlToImage)) : Text(''),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                            localSearch[position].title,
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black45)),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          news.manageFavMap(localSearch[position]);
+                        },
+                        child: manageFavIcons(
+                            news, localSearch[position]),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      } else {
+        return CircularProgressIndicator();
+      }
+    });
   }
 
   Widget listNewCreator(var tabcategory) {
@@ -151,28 +257,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     });
   }
 
-  // Future manageFav(Article favSelected) async {
-  //   final SharedPreferences prefs = await _prefs;
-  //   var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
-  //   // check exists
-
-  //   String check = prefs.getString(favSelected.url) ?? 'not available';
-  //   print('################################# shared pref check ${favSelected.title} => $check');
-  //   if (prefs.getString(favSelected.url) == null) {
-  //     prefs
-  //         .setString(favSelected.url, json.encode(favSelected))
-  //         .then((bool success) {
-  //       print(
-  //           '################################# shared pref saved ${favSelected.title}');
-        
-  //       articlesHolder.addToFavArticles(favSelected);
-  //     });
-  //   }
-  //   else
-  //   {
-  //       articlesHolder.removeFavArticles(favSelected);
-  //   }
-  // }
 
   Widget manageFavIcons(ArticlesRepo mynews, Article current) {
     

@@ -16,13 +16,11 @@ class ArticlesRepo extends ChangeNotifier {
 
 
   ArticlesRepo(BuildContext context){
-    //Api().getHeadlines().then((value) => articles = value);
-    loadFavouritesMap();
+    loadFavouritesMap().then((bool value) { print('fav loaded!');});
   }
 
   set articles(List<Article> news) {
     assert(news != null);
-
     _articles.addAll(news);
     notifyListeners();
   }
@@ -34,22 +32,41 @@ class ArticlesRepo extends ChangeNotifier {
   }
   
   bool get onlyFav => _onlyFav;
-  void set onlyFav(bool value) {
+  set onlyFav(bool value) {
     _onlyFav = value;
     notifyListeners();
   }
 
-  List<Article> getArticles(String category){
+  List<Article> getArticles(String category, {searchText = ''}){
      if (!_onlyFav){
-       return _articlesMap[category];
+       if (category=='all')
+       {
+         if (searchText=='')
+         {
+            return [_articlesMap['general'], _articlesMap['health'], _articlesMap['health']].expand((x) => x).toList();
+         }
+         else // filtro su searhc string
+         {
+            List<Article> allItems = [_articlesMap['general'], _articlesMap['health'], _articlesMap['health']].expand((x) => x).toList();
+            List<Article> founds=[];
+            for (int i = 0; i < allItems.length; i++) {
+              if (allItems[i].title.toLowerCase().contains(searchText.toLowerCase())) {
+                founds.add(allItems[i]);
+              }
+            }
+            return founds;
+         }
+       }
+       else
+       {
+          return _articlesMap[category];
+       }
+
      }
      else
      {
         final List<Article> tempFavList = [];
-        _favArticlesMap.forEach((k,v) {  
-            tempFavList.add(v);
-        });
-        
+        _favArticlesMap.forEach((k,v) { tempFavList.add(v); });
         return tempFavList;
      }
   }
@@ -69,13 +86,14 @@ class ArticlesRepo extends ChangeNotifier {
     preferencesUpdate(favObj);
   }
 
-  Future<void> loadFavouritesMap() async  {
+  Future<bool> loadFavouritesMap() async  {
       final SharedPreferences prefs = await _prefs;
       for (var item in prefs.getKeys()) {
         print(item);
         Map articleMap = jsonDecode(prefs.getString(item));
         _favArticlesMap[item] =  Article.fromJson(articleMap);
       }
+      return true;
   }  
 
 
