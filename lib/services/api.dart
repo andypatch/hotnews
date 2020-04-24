@@ -1,11 +1,15 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer';
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hotnews/models/article.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hotnews/models/articlesRepo.dart';
+import 'package:dio/dio.dart';
+import 'package:dio_flutter_transformer/dio_flutter_transformer.dart';
 
 const APIKEY = '116645e222bc47e2ada73c969299197d';
 const HOSTNAME = 'https://newsapi.org/v2/';
@@ -13,6 +17,24 @@ const TOP_HEADLINES = 'top-headlines';
 
 ///
 class Api {
+  final Dio dio = Dio();
+  final DioCacheManager dioCache =
+      DioCacheManager(CacheConfig(baseUrl: HOSTNAME));
+
+  Api() {
+    dio.options.connectTimeout = 4000;
+    dio.transformer = FlutterTransformer();
+    dio.interceptors.add(dioCache.interceptor);
+    dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
+      if (options.extra.isNotEmpty) {
+        options.queryParameters.addAll(options.extra);
+      }
+      LinkedHashMap<String, dynamic> params = options.queryParameters;
+      params['apiKey'] = 'TOKEN';
+      params['country'] = 'it';
+    }));
+  }
   Future<void> fetchArticles(
       {@required BuildContext context, String category}) async {
     var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
@@ -49,21 +71,3 @@ class Api {
     return '$url&apiKey=$APIKEY';
   }
 }
-
-// class MainNews {
-
-//     static Future<List> getArticles() async {
-//         String completedUrl =   apiUrl + methodUrl +  '&apiKey=' +apiKey;
-//         final http.Response response = await http.get(completedUrl);
-//         debugPrint(response.body);
-//         if (response.statusCode != 200) {
-//           throw Exception('Failed to load jobs from API');
-//         }
-//         else
-//         {
-//           final parsed =json.decode(response.body);
-//           var a = parsed['articles'].map((element) => new Article.fromJson(element)).toList();
-//           return a;
-//         }
-//       }
-// }
