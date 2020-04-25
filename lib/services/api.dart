@@ -23,27 +23,40 @@ class Api {
 
   Api() {
     dio.options.connectTimeout = 4000;
+    dio.options.baseUrl=HOSTNAME;
     dio.transformer = FlutterTransformer();
     dio.interceptors.add(dioCache.interceptor);
-    dio.interceptors
-        .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
-      if (options.extra.isNotEmpty) {
-        options.queryParameters.addAll(options.extra);
-      }
-      LinkedHashMap<String, dynamic> params = options.queryParameters;
-      params['apiKey'] = 'TOKEN';
-      params['country'] = 'it';
-    }));
+    
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (RequestOptions options) async {
+        if (options.extra.isNotEmpty) {
+          options.queryParameters.addAll(options.extra);
+        }
+        LinkedHashMap<String, dynamic> params = options.queryParameters;
+        params['apiKey'] = APIKEY;
+        params['country'] = 'it';
+        options.queryParameters = params;
+      },
+      onResponse: (Response response) async {
+        return response;
+      },
+      onError: (DioError e) async {
+        return e;
+      }));
   }
-  Future<void> fetchArticles(
-      {@required BuildContext context, String category}) async {
+  Future<void> fetchArticles({@required BuildContext context, String category}) async {
+    
     var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
-    var client = http.Client();
-    final response =
-        await client.get(_buildUrl(TOP_HEADLINES, category: category));
+    
+    dio.options.extra = {"category": category};
+    final response = await dio.get(TOP_HEADLINES);
+    
     print(response);
-    List<Article> news = await compute(_parseArticle, response.body);
-    articlesHolder.addToArticlesMap(category, news);
+
+    List<Article> news = response.data['articles']
+        .map<Article>((json) => Article.fromJson(json))
+        .toList();
+     articlesHolder.addToArticlesMap(category, news);
     if (articlesHolder.favArticlesMap.length == 0) {
       articlesHolder.loadFavouritesMap();
     }

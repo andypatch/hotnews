@@ -277,7 +277,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                             .urlToImage != null ? Image(
                         image: NetworkImage(news
                             .getArticles(tabcategory)[position]
-                            .urlToImage)) : Text(''),
+                            .urlToImage)) : Text('No Picture Available'),
                   ),
                   SizedBox(
                     height: 10,
