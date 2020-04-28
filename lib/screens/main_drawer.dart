@@ -8,7 +8,7 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
+    //var articlesHolder = Provider.of<ArticlesRepo>(context, listen: false);
     return Drawer(
         child: Column(
       children: <Widget>[
@@ -64,7 +64,7 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           onTap: () {
-                articlesHolder.cleanPrefs();
+               // articlesHolder.cleanPrefs();
                 Navigator.pop(context);
           }
         ),        

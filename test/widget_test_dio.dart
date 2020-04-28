@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hotnews/main.dart';
 import 'package:hotnews/services/api.dart';
 
 void main() {
@@ -16,7 +15,7 @@ void main() {
       await tester.pumpWidget(
         Builder(
           builder: (BuildContext context) {
-            Api().fetchArticles(context: context, category: 'general');
+            Api().fetchArticles('general');
             expect('a', 'a');
 
             // The builder function must return a widget.
