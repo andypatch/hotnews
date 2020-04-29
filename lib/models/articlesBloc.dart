@@ -27,12 +27,14 @@ class ArticlesBloc {
     _currentState = ArticlesBlocState.empty();
   }
 
+  /// Favourites loading and shared pref
   prefInit(){
     _prefs = SharedPreferences.getInstance();    
     loadFavouritesMap().then((bool value) { print('fav loaded!');});
     _currentState.favArticlesMap.addAll(_favArticlesMap);
   }
 
+  /// current state getter
   ArticlesBlocState getCurrentState() {
     return _currentState;
   }
@@ -44,7 +46,6 @@ class ArticlesBloc {
 
   void fetchArticles(String category) {
     _fetchArticlesSub?.cancel();
-
     _currentState.loading = true;
     _articlesController.add(_currentState);
 
@@ -73,7 +74,9 @@ class ArticlesBloc {
     _articlesController.add(_currentState);
   }  
   
-  searchText (String textToSearch){
+  /// serach text in the articleMap
+  /// seems fast
+  void searchText (String textToSearch){
     _articlesMap.clear();
     _articlesMap.addAll(_articlesMapSafeCopy);  
 
@@ -92,6 +95,7 @@ class ArticlesBloc {
     _articlesController.add(_currentState);
   }
 
+  /// methid switcher beteween standard data and favourites
   switchNewsData (){
     if (this.onlyFav) {
       /// backup corrente 
@@ -116,7 +120,8 @@ class ArticlesBloc {
     _articlesController.add(_currentState);
   }
 
-  manageFavMap(Article favObj){
+  /// manage Favourites map
+  void manageFavMap(Article favObj){
     if (_favArticlesMap.containsKey(favObj.url))
     {
       _favArticlesMap.remove(favObj.url);
@@ -130,6 +135,8 @@ class ArticlesBloc {
     _articlesController.add(_currentState);
   }
 
+  /// loading favourites from shared preferences
+  /// seems works fine
   Future<bool> loadFavouritesMap() async  {
       final SharedPreferences prefs = await _prefs;
       for (var item in prefs.getKeys()) {
@@ -140,11 +147,13 @@ class ArticlesBloc {
       return true;
   }  
 
+  /// favourites managment
   void preferencesUpdate(Article favObj) async{
     _prefs ?? prefInit();
     final SharedPreferences prefs = await _prefs;
     prefs.containsKey(favObj.url) ? prefs.remove(favObj.url) : prefs.setString(favObj.url, json.encode(favObj));
   }    
+  
   /// clean preference method
   void cleanPrefs() async{
       final SharedPreferences prefs = await _prefs;

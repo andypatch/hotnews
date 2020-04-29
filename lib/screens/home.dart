@@ -3,7 +3,6 @@ import 'package:hotnews/models/articlesBloc.dart';
 import 'package:hotnews/models/articlesRepo.dart';
 import 'package:flutter/material.dart';
 import 'package:hotnews/screens/news_detail.dart';
-import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:f_logs/f_logs.dart';
 
@@ -18,7 +17,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Widget _appBarTitle = new Text('HotNews');
   final TextEditingController _filter = new TextEditingController();
-  String _searchText = "";
 
   int _currentIndex = 0;
   final List<Tab> myTabs = <Tab>[

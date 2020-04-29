@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:hotnews/models/articlesBloc.dart';
-import 'package:provider/provider.dart';
 import 'package:hotnews/models/articlesRepo.dart';
 import 'screens/home.dart';
 
