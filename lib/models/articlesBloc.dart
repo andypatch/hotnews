@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'package:flutter/material.dart';
 import 'package:hotnews/models/article.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,9 +19,9 @@ class ArticlesBloc {
 
   StreamSubscription<Article> _fetchArticlesSub;
 
+  HashMap get favArticlesMap => _favArticlesMap;
   final _articlesController = StreamController<ArticlesBlocState>.broadcast();
   Stream<ArticlesBlocState> get articlesStream => _articlesController.stream;
-
 
   ArticlesBloc(){
     _currentState = ArticlesBlocState.empty();
@@ -43,7 +42,7 @@ class ArticlesBloc {
     _onlyFav = value;
   }
 
-  fetchArticles(String category) {
+  void fetchArticles(String category) {
     _fetchArticlesSub?.cancel();
 
     _currentState.loading = true;
@@ -57,20 +56,34 @@ class ArticlesBloc {
           }
           _currentState.loading = false;
           _articlesController.add(_currentState);
+          _articlesMap.addAll(_currentState.articlesMap);
     });
   }
 
+  void startSearch() {
+    _articlesMapSafeCopy.clear();
+    _articlesMapSafeCopy.addAll(_articlesMap);    
+  }
+
+  void stopSearch() {
+    _articlesMap.clear();
+    _articlesMap.addAll(_articlesMapSafeCopy);    
+    _currentState.articlesMap.clear();
+    _currentState.articlesMap.addAll(_articlesMap);
+    _articlesController.add(_currentState);
+  }  
   
   searchText (String textToSearch){
-    
-    _articlesMapSafeCopy.clear();
-    _articlesMapSafeCopy.addAll(_articlesMap);
+    _articlesMap.clear();
+    _articlesMap.addAll(_articlesMapSafeCopy);  
 
-    _currentState.articlesMap.forEach((k,v)
+    _articlesMap.forEach((k,v)
     { 
       List<Article> fav = [];
       for(var i = 0; i < v.length; i++){
-        if (v[i].description.contains(textToSearch)){
+        String actualDescription = v[i].description ?? '';
+        String actualContent = v[i].content ?? '';
+        if (actualDescription.toLowerCase().contains(textToSearch) || actualContent.toLowerCase().contains(textToSearch)){
             fav.add(v[i]);
         }
       } 
@@ -103,42 +116,6 @@ class ArticlesBloc {
     _articlesController.add(_currentState);
   }
 
-  // List<Article> getArticles(String category, {searchText = ''}){
-  //    if (!_onlyFav){
-  //      if (category=='all')
-  //      {
-  //        if (searchText=='')
-  //        {
-  //           return [_articlesMap['general'], _articlesMap['health'], _articlesMap['technology']].expand((x) => x).toList();
-  //        }
-  //        else // filtro su searhc string
-  //        {
-  //           List<Article> allItems = [_articlesMap['general'], _articlesMap['health'], _articlesMap['technology']].expand((x) => x).toList();
-  //           List<Article> founds=[];
-  //           for (int i = 0; i < allItems.length; i++) {
-  //             if (allItems[i].title.toLowerCase().contains(searchText.toLowerCase())) {
-  //               founds.add(allItems[i]);
-  //             }
-  //           }
-  //           return founds;
-  //        }
-  //      }
-  //      else
-  //      {
-  //         return _articlesMap[category];
-  //      }
-
-  //    }
-  //    else
-  //    {
-  //       final List<Article> tempFavList = [];
-  //       _favArticlesMap.forEach((k,v) { tempFavList.add(v); });
-  //       return tempFavList;
-  //    }
-  // }
-
-  HashMap get favArticlesMap => _favArticlesMap;
-  
   manageFavMap(Article favObj){
     if (_favArticlesMap.containsKey(favObj.url))
     {
@@ -168,18 +145,18 @@ class ArticlesBloc {
     final SharedPreferences prefs = await _prefs;
     prefs.containsKey(favObj.url) ? prefs.remove(favObj.url) : prefs.setString(favObj.url, json.encode(favObj));
   }    
-
+  /// clean preference method
   void cleanPrefs() async{
       final SharedPreferences prefs = await _prefs;
       prefs.clear().then((value) {
         _favArticlesMap.clear();
         });
+      _currentState.favArticlesMap.clear();
+      _articlesController.add(_currentState);        
+      
   }
-
 }
-
 class ArticlesBlocState {
-
   bool favourites = false;
   bool loading;
   Map<String, List<Article>> articlesMap = Map();

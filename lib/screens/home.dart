@@ -39,16 +39,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       _filter.addListener(() {
         var bloc = ArticlesRepo.of(context).bloc;
         FLog.info(text: 'constructor Home screen');
-        if (_filter.text.isEmpty) {
-          setState(() {
-            _searchText = "";
-            filteredNames = [];//bloc.getArticles('all');
-          });
-        } else {
-          setState(() {
-            bloc.searchText(_filter.text);
-          });
-        }
+        bloc.searchText(_filter.text.toLowerCase());
       });
 
   }
@@ -66,7 +57,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     switch (rightMenuChoises.indexOf(choice)) {
       case 0:
         {
-          Provider.of<ArticlesRepo>(context, listen: false).bloc.cleanPrefs();
+          ArticlesRepo.of(context).bloc.cleanPrefs();
           userMessage = "Favourites deleted!";
         }
         break;
@@ -108,6 +99,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     var bloc =  ArticlesRepo.of(context).bloc;
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
+        bloc.startSearch();
         this._searchIcon = new Icon(Icons.close);
         this._appBarTitle = new TextField(
           style: TextStyle(color: Colors.white),
@@ -117,13 +109,14 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
             fillColor: Colors.white,
             prefixIcon: new Icon(Icons.search),
             hintText: ' Search...',
-            suffixIcon: IconButton(
-              onPressed: () => _filter.clear(),
-              icon: Icon(Icons.clear),
-            ),
+            // suffixIcon: IconButton(
+            //   onPressed: () => _filter.clear(),
+            //   icon: Icon(Icons.clear),
+            // ),
           ),
         );
       } else {
+        bloc.stopSearch();
         this._searchIcon = new Icon(Icons.search);
         this._appBarTitle = new Text('HotNews');
         filteredNames = []; //bloc.getArticles('all');
