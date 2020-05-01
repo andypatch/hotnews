@@ -1,11 +1,20 @@
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hotnews/models/article.dart';
 import 'package:hotnews/models/articlesBloc.dart';
 import 'package:hotnews/models/articlesRepo.dart';
 import 'screens/home.dart';
 
 
-void main() {
+
+const String NewsBox = "NewsBox";
+void main() async{
+  await Hive.initFlutter();
+  Hive.registerAdapter(ArticleAdapter());
+  await Hive.openBox<Article>(NewsBox);
+  
   runApp(MyApp());
 }
 

@@ -3,9 +3,9 @@ import 'package:hotnews/models/articlesBloc.dart';
 
 class ArticlesRepo extends InheritedWidget {
   final ArticlesBloc bloc;
-  final Widget child;
+
   
-  ArticlesRepo({this.bloc, this.child}) : super(child: child);
+  ArticlesRepo({this.bloc, Widget child}) : super(child: child);
   static ArticlesRepo of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType();
 

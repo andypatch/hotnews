@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:hotnews/models/article.dart';
+import 'package:hotnews/services/db_repo.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hotnews/services/api.dart';
@@ -16,6 +17,8 @@ class ArticlesBloc {
   final HashMap<String, Article> _favArticlesMap = HashMap();
   bool _onlyFav=false;
 
+  final DbRepository _dbRepository = DbRepository();
+
 
   StreamSubscription<Article> _fetchArticlesSub;
 
@@ -25,6 +28,9 @@ class ArticlesBloc {
 
   ArticlesBloc(){
     _currentState = ArticlesBlocState.empty();
+    _dbRepository.watch().forEach((element){
+      print ("Update");
+    });
   }
 
   /// Favourites loading and shared pref

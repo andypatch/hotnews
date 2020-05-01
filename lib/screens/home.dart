@@ -165,9 +165,10 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       ),
       //drawer:MainDrawer(),
       body: StreamBuilder<ArticlesBlocState>(
-            initialData: bloc.getCurrentState(),
-            stream: bloc.articlesStream,
-            builder: _buildList),
+              initialData: bloc.getCurrentState(),
+              stream: bloc.articlesStream,
+              builder: _buildList),
+              
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
@@ -269,8 +270,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                 ),
           );
         }).toList());
-
-    
   }
 
   Widget manageFavIcons(Map mynews, Article current) {
