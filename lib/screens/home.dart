@@ -1,10 +1,12 @@
+import 'package:hive/hive.dart';
+import 'package:hotnews/components/news_listview_item.dart';
 import 'package:hotnews/models/article.dart';
 import 'package:hotnews/models/articlesBloc.dart';
 import 'package:hotnews/models/articlesRepo.dart';
 import 'package:flutter/material.dart';
-import 'package:hotnews/screens/news_detail.dart';
-import 'package:share/share.dart';
 import 'package:f_logs/f_logs.dart';
+
+import '../main.dart';
 
 class MyHome extends StatefulWidget {
   const MyHome({Key key}) : super(key: key);
@@ -13,10 +15,11 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
-  
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Widget _appBarTitle = new Text('HotNews');
   final TextEditingController _filter = new TextEditingController();
+
+  Box<Article> favoriteBox;
 
   int _currentIndex = 0;
   final List<Tab> myTabs = <Tab>[
@@ -26,20 +29,18 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     Tab(text: 'Technology'),
   ];
 
-
   TabController _tabController;
   Icon _searchIcon = new Icon(Icons.search);
   List filteredNames = new List();
   bool _firstTimeLoad = true;
 
   _MyHomeState() {
-      
-      _filter.addListener(() {
-        var bloc = ArticlesRepo.of(context).bloc;
-        FLog.info(text: 'constructor Home screen');
-        bloc.searchText(_filter.text.toLowerCase());
-      });
-
+    favoriteBox = Hive.box(NewsBox);
+    _filter.addListener(() {
+      var bloc = ArticlesRepo.of(context).bloc;
+      FLog.info(text: 'constructor Home screen');
+      bloc.searchText(_filter.text.toLowerCase());
+    });
   }
 
   @override
@@ -48,7 +49,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     super.initState();
     _tabController = TabController(vsync: this, length: myTabs.length);
   }
-
 
   void _rightMenuSelect(Choice choice) {
     String userMessage = '';
@@ -73,8 +73,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       backgroundColor: Colors.green,
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
@@ -94,7 +93,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   }
 
   void _searchPressed() {
-    var bloc =  ArticlesRepo.of(context).bloc;
+    var bloc = ArticlesRepo.of(context).bloc;
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         bloc.startSearch();
@@ -127,7 +126,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     ArticlesBloc bloc = ArticlesRepo.of(context).bloc;
     if (_firstTimeLoad) {
-      bloc.prefInit();
       bloc.fetchArticles('general');
       bloc.fetchArticles('health');
       bloc.fetchArticles('technology');
@@ -157,18 +155,17 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
           ),
         ],
         bottom: TabBar(
-                indicatorWeight: 2,
-                controller: _tabController,
-                tabs: myTabs,
-              )
-            ,
+          indicatorWeight: 2,
+          controller: _tabController,
+          tabs: myTabs,
+        ),
       ),
       //drawer:MainDrawer(),
       body: StreamBuilder<ArticlesBlocState>(
-              initialData: bloc.getCurrentState(),
-              stream: bloc.articlesStream,
-              builder: _buildList),
-              
+          initialData: bloc.getCurrentState(),
+          stream: bloc.articlesStream,
+          builder: _buildList),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
@@ -182,7 +179,8 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildList(BuildContext context, AsyncSnapshot<ArticlesBlocState> snapshot) {
+  Widget _buildList(
+      BuildContext context, AsyncSnapshot<ArticlesBlocState> snapshot) {
     if (snapshot.data.loading) {
       return Center(
         child: CircularProgressIndicator(),
@@ -194,92 +192,18 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
         children: myTabs.map((Tab tab) {
           return Center(
             child: Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: ListView.builder(
-                  itemCount: snapshot.data.articlesMap[tab.text.toLowerCase()] == null ? 0 : snapshot.data.articlesMap[tab.text.toLowerCase()].length,
-                  itemBuilder: (context, position) => Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: Column(
-                        children: <Widget>[
-                          new GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => NewsDetail(
-                                          snapshot.data.articlesMap[tab.text.toLowerCase()][position])));
-                            },
-                            child:
-                                snapshot.data.articlesMap[tab.text.toLowerCase()][position].urlToImage !=
-                                        null
-                                    ? Image(
-                                        image: NetworkImage(snapshot.data
-                                            .articlesMap[tab.text.toLowerCase()][position].urlToImage))
-                                    : Text('No Picture Available'),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                    snapshot.data.articlesMap[tab.text.toLowerCase()][position].title,
-                                    style: TextStyle(fontSize: 16, color: Colors.black45)),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Builder(
-                                builder: (BuildContext context) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      final RenderBox box = context.findRenderObject();
-                                      Share.share(
-                                          snapshot
-                                              .data.articlesMap[tab.text.toLowerCase()][position].url,
-                                          subject: 'News sharing',
-                                          sharePositionOrigin:
-                                              box.localToGlobal(Offset.zero) & box.size);
-                                    },
-                                    child: Icon(Icons.share),
-                                  );
-                                },
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                    /// add or remove favourites from list
-                                  ArticlesRepo.of(context).bloc.manageFavMap(snapshot.data.articlesMap[tab.text.toLowerCase()][position]);
-                                  return;
-                                },
-                                child: manageFavIcons(ArticlesRepo.of(context).bloc.favArticlesMap,
-                                    snapshot.data.articlesMap[tab.text.toLowerCase()][position]),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                ),
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: ListView.builder(
+                itemCount: snapshot.data.articlesMap[tab.text.toLowerCase()] ==
+                        null
+                    ? 0
+                    : snapshot.data.articlesMap[tab.text.toLowerCase()].length,
+                itemBuilder: (context, position) => NewsItem(snapshot
+                    .data.articlesMap[tab.text.toLowerCase()][position]),
+              ),
+            ),
           );
         }).toList());
-  }
-
-  Widget manageFavIcons(Map mynews, Article current) {
-    if (mynews.containsKey(current.url))
-      return Icon(
-        Icons.favorite,
-        color: Colors.red,
-      );
-    else
-      return Icon(Icons.favorite_border);
   }
 }
 

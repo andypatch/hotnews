@@ -10,16 +10,16 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../main.dart';
 
-class NewsItem extends StatefulWidget {
+class sNewsItem extends StatefulWidget {
   final Article article;
 
-  NewsItem(this.article, {Key key}) : super(key: key);
+  sNewsItem(this.article, {Key key}) : super(key: key);
 
   @override
-  _NewsItemState createState() => _NewsItemState();
+  _sNewsItemState createState() => _sNewsItemState();
 }
 
-class _NewsItemState extends State<NewsItem> {
+class _sNewsItemState extends State<sNewsItem> {
   Box<Article> favoriteBox;
 
   @override

@@ -31,8 +31,12 @@ class Article extends HiveObject{
   @HiveField(7)
   String content;
 
+  @HiveField(8)
+  String source;  
+
    Article({
      this.id,
+     this.source,
      this.author,
      this.title,
      this.description,
@@ -55,6 +59,8 @@ class Article extends HiveObject{
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
+        'source': source,
         'author': author,
         'title': title,
         'description': description,
@@ -80,9 +86,8 @@ class ArticleAdapter extends TypeAdapter<Article>{
         ..description = reader.read()
         ..url = reader.read()
         ..urlToImage = reader.read()
-        ..publishedAt = reader.read();
-       // ..source = reader.read();
-
+        ..publishedAt = reader.read()
+        ..source = reader.read();
   }
 
   @override 
@@ -97,7 +102,7 @@ class ArticleAdapter extends TypeAdapter<Article>{
       writer.write(obj.url);
       writer.write(obj.urlToImage);
       writer.write(obj.publishedAt);
-      //writer.write(obj.source);
+      writer.write(obj.source);
     }
 
 
