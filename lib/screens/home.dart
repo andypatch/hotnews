@@ -5,6 +5,7 @@ import 'package:hotnews/models/articlesBloc.dart';
 import 'package:hotnews/models/articlesRepo.dart';
 import 'package:flutter/material.dart';
 import 'package:f_logs/f_logs.dart';
+import 'package:provider/provider.dart';
 
 import '../main.dart';
 
@@ -21,13 +22,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
 
   Box<Article> favoriteBox;
 
-  int _currentIndex = 0;
-  final List<Tab> myTabs = <Tab>[
-    //Tab(icon: Icon(Icons.search)),
-    Tab(text: 'General'),
-    Tab(text: 'Health'),
-    Tab(text: 'Technology'),
-  ];
 
   TabController _tabController;
   Icon _searchIcon = new Icon(Icons.search);
@@ -45,9 +39,18 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    FLog.info(text: 'iniState Home screen');
     super.initState();
-    _tabController = TabController(vsync: this, length: myTabs.length);
+    _tabController = TabController(vsync: this, length: categories.length);
+    _tabController.addListener(_handleTabSelection);
+
+    // bloc.fetchArticles();
+  }
+  void _handleTabSelection() async {
+    if (!_tabController.indexIsChanging) {
+      final bloc = ArticlesRepo.of(context).bloc;
+      bloc.changeCategory(_tabController.index);
+    } else
+      print("Tab is switching..from active to inactive");
   }
 
   void _rightMenuSelect(Choice choice) {
@@ -55,7 +58,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     switch (rightMenuChoises.indexOf(choice)) {
       case 0:
         {
-          ArticlesRepo.of(context).bloc.cleanPrefs();
+          /// TODO: implement the feature
           userMessage = "Favourites deleted!";
         }
         break;
@@ -82,16 +85,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  /// view favourites event
-  void _onItemTapped(int index) {
-    var bloc = ArticlesRepo.of(context).bloc;
-    index == 0 ? bloc.onlyFav = false : bloc.onlyFav = true;
-    bloc.switchNewsData();
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
   void _searchPressed() {
     var bloc = ArticlesRepo.of(context).bloc;
     setState(() {
@@ -106,10 +99,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
             fillColor: Colors.white,
             prefixIcon: new Icon(Icons.search),
             hintText: ' Search...',
-            // suffixIcon: IconButton(
-            //   onPressed: () => _filter.clear(),
-            //   icon: Icon(Icons.clear),
-            // ),
           ),
         );
       } else {
@@ -126,10 +115,8 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     ArticlesBloc bloc = ArticlesRepo.of(context).bloc;
     if (_firstTimeLoad) {
-      bloc.fetchArticles('general');
-      bloc.fetchArticles('health');
-      bloc.fetchArticles('technology');
       _firstTimeLoad = false;
+      bloc.fetchArticles();
     }
 
     return Scaffold(
@@ -154,10 +141,13 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
             },
           ),
         ],
-        bottom: TabBar(
-          indicatorWeight: 2,
-          controller: _tabController,
-          tabs: myTabs,
+        bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(42.0),
+                child: StreamBuilder<AppScreen>(
+                  stream: bloc.actualScreen,
+                  builder: (context, AsyncSnapshot<AppScreen> snapshot) {
+                    return topBar(snapshot.data);
+                  },)
         ),
       ),
       //drawer:MainDrawer(),
@@ -167,8 +157,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
           builder: _buildList),
 
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
+        onTap: (index) => bloc.changeScreen(index),
         items: [
           BottomNavigationBarItem(
               title: Text("News"), icon: Icon(Icons.new_releases)),
@@ -179,6 +168,10 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     );
   }
 
+  get categories => CategoriesEnum.values
+      .map((e) => Tab(text: categoryName(e).toUpperCase()))
+      .toList();
+
   Widget _buildList(
       BuildContext context, AsyncSnapshot<ArticlesBlocState> snapshot) {
     if (snapshot.data.loading) {
@@ -188,23 +181,39 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     }
 
     return TabBarView(
-        controller: _tabController,
-        children: myTabs.map((Tab tab) {
-          return Center(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: ListView.builder(
-                itemCount: snapshot.data.articlesMap[tab.text.toLowerCase()] ==
-                        null
-                    ? 0
-                    : snapshot.data.articlesMap[tab.text.toLowerCase()].length,
-                itemBuilder: (context, position) => NewsItem(snapshot
-                    .data.articlesMap[tab.text.toLowerCase()][position]),
-              ),
+      controller: _tabController,
+      /// TODO: spiegare perchè senza <Widget> non funziona un cazzo
+      children: categories.map<Widget>((Tab tab) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: ListView.builder(
+              itemCount: snapshot.data.articlesMap[tab.text.toLowerCase()] ==
+                      null
+                  ? 0
+                  : snapshot.data.articlesMap[tab.text.toLowerCase()].length,
+              itemBuilder: (context, position) => NewsItem(
+                  snapshot.data.articlesMap[tab.text.toLowerCase()][position]),
             ),
-          );
-        }).toList());
+          ),
+        );
+      }).toList(),
+    );
   }
+  Widget topBar(AppScreen appScreen) {
+      switch (appScreen) {
+        case AppScreen.favorites:
+          return Container();
+        case AppScreen.main:
+        default:
+          return TabBar(
+            isScrollable: true,
+            labelColor: Colors.white,
+            tabs: categories,
+            controller: _tabController,
+          );
+      }
+    }  
 }
 
 class Choice {

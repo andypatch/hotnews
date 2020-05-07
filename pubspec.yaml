@@ -1,5 +1,5 @@
 name: hotnews
-description: A new Flutter project.
+description: HotNews smart project.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -40,9 +40,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  hive_generator: ^0.7.0+2
-  build_runner: ^1.9.0
-
+  #hive_generator: ^0.7.0+2
+  #build_runner: ^1.9.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

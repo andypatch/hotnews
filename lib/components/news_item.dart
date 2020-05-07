@@ -42,17 +42,17 @@ class _sNewsItemState extends State<sNewsItem> {
                     child: Center(
                       child: kIsWeb
                           ? Image.network(
-                        widget.article.urlToImage,
-                        fit: BoxFit.fitWidth,
-                      )
+                              widget.article.urlToImage,
+                              fit: BoxFit.fitWidth,
+                            )
                           : CachedNetworkImage(
-                        imageUrl: widget.article.urlToImage,
-                        fit: BoxFit.fitWidth,
-                        placeholder: (context, url) =>
-                            center(CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            center(Icon(Icons.image)),
-                      ),
+                              imageUrl: widget.article.urlToImage,
+                              fit: BoxFit.fitWidth,
+                              placeholder: (context, url) =>
+                                  center(CircularProgressIndicator()),
+                              errorWidget: (context, url, error) =>
+                                  center(Icon(Icons.image)),
+                            ),
                     )),
                 Text(
                     widget.article.author != null ? widget.article.author : ""),

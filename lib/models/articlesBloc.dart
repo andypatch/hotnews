@@ -4,6 +4,26 @@ import 'package:hotnews/services/db_repo.dart';
 import 'package:hotnews/services/api.dart';
 
 
+enum AppScreen { main, favorites }
+
+enum CategoriesEnum {
+  general,
+  business,
+  entertainment,
+  health,
+  science,
+  sports,
+  technology
+}
+
+// interessante
+String categoryName(CategoriesEnum category) =>
+    category
+        .toString()
+        .split('.')
+        .last;
+
+
 class ArticlesBloc {
   
   ArticlesBlocState _currentState;
@@ -12,12 +32,44 @@ class ArticlesBloc {
   final Map<String, List<Article>> _articlesMap = Map();
   final Map<String, List<Article>> _articlesMapSafeCopy = Map();
 
-  bool _onlyFav=false;
+  CategoriesEnum _actualCategory = CategoriesEnum.general;
+  AppScreen _actualScreen = AppScreen.main;
 
+
+  bool _onlyFav=false;
   StreamSubscription<Article> _fetchArticlesSub;
 
   final _articlesController = StreamController<ArticlesBlocState>.broadcast();
+  final _screenController = StreamController<CategoriesEnum>.broadcast();
+  final _actualScreenController = StreamController<AppScreen>.broadcast();
+
+  Stream<CategoriesEnum> get actualCategory => _screenController.stream;
+  Stream<AppScreen> get actualScreen => _actualScreenController.stream;
   Stream<ArticlesBlocState> get articlesStream => _articlesController.stream;
+
+  changeScreen(int index) {
+    _actualScreen = AppScreen.values[index];
+    _actualScreenController.sink.add(_actualScreen);
+    _manageArticles();
+  }
+
+  _manageArticles(){
+    if (AppScreen.favorites == _actualScreen) {
+          _currentState.articlesMap[categoryName(_actualCategory)] = _dbRepository.getArticles();
+          _currentState.loading = false;
+          _articlesController.add(_currentState);      
+    }
+    else {
+      fetchArticles();
+    }      
+  }
+
+  changeCategory (int index){
+    _actualCategory = CategoriesEnum.values[index];
+    //_articles.sink.add(null); //Clear news
+    _screenController.sink.add(_actualCategory);
+    fetchArticles(); 
+  }
 
   ArticlesBloc(){
     _currentState = ArticlesBlocState.empty();
@@ -35,16 +87,22 @@ class ArticlesBloc {
     _onlyFav = value;
   }
 
-  void fetchArticles(String category) {
+  String categoryName(CategoriesEnum category) =>
+    category
+        .toString()
+        .split('.')
+        .last;
+
+  void fetchArticles() {
     _fetchArticlesSub?.cancel();
     _currentState.loading = true;
     _articlesController.add(_currentState);
 
-    Api().fetchArticles(category)
+    Api().fetchArticles(categoryName(_actualCategory))
         .asStream()
         .listen((dynamic result) {
           if (result is List<Article>) {
-            _currentState.articlesMap[category] = result;
+            _currentState.articlesMap[categoryName(_actualCategory)] = result;
           }
           _currentState.loading = false;
           _articlesController.add(_currentState);
@@ -86,21 +144,10 @@ class ArticlesBloc {
     _articlesController.add(_currentState);
   }
 
-  /// methid switcher beteween standard data and favourites
-  switchNewsData (){
-    if (this.onlyFav) {
-      /// backup corrente 
-      /// TODO:  implemnents
-    }
-    else
-    {
-
-    }
-    _articlesController.add(_currentState);
-  }
-
-  void cleanPrefs(){
-      
+  dispose(){
+    _screenController?.close();
+    _actualScreenController?.close();
+    _articlesController?.close();
   }
 
 }

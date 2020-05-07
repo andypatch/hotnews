@@ -2,8 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:hotnews/main.dart';
 import 'package:hotnews/models/article.dart';
 
-class DbRepository{
-  
+class DbRepository {
   Box<Article> favouritesNews = Hive.box(NewsBox);
 
   void addArticle(Article article) => favouritesNews.put(article.id, article);
@@ -11,5 +10,4 @@ class DbRepository{
   List<Article> getArticles() => favouritesNews.values.toList();
 
   watch() => favouritesNews.watch();
-
 }
