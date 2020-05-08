@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hotnews/models/article.dart';
+import 'package:hotnews/models/articlesRepo.dart';
 import 'package:hotnews/screens/news_detail.dart';
 import 'package:share/share.dart';
 
@@ -77,7 +78,6 @@ class _NewsItemState extends State<NewsItem> {
                   onTap: () {
                     /// add or remove favourites from list
                     this.onFavoritePress(widget.article);
-                    return;
                   },
                   child: manageFavIcons(widget.article.id),
                 ),
@@ -92,9 +92,13 @@ class _NewsItemState extends State<NewsItem> {
   void onFavoritePress(Article currentArticle) {
     if (favoriteBox.containsKey(currentArticle.id)) {
       favoriteBox.delete(currentArticle.id);
-      return;
     }
-    favoriteBox.put(currentArticle.id, currentArticle);
+    else{
+      favoriteBox.put(currentArticle.id, currentArticle);
+    }
+    final bloc = ArticlesRepo.of(context).bloc;
+    bloc.favouritesChange();
+
   }
 
   Widget manageFavIcons(String id) {

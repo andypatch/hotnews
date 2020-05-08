@@ -3,8 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hotnews/models/article.dart';
-import 'package:hotnews/services/db_repo.dart';
-import 'package:provider/provider.dart';
+
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 

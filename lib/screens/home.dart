@@ -5,7 +5,6 @@ import 'package:hotnews/models/articlesBloc.dart';
 import 'package:hotnews/models/articlesRepo.dart';
 import 'package:flutter/material.dart';
 import 'package:f_logs/f_logs.dart';
-import 'package:provider/provider.dart';
 
 import '../main.dart';
 
@@ -58,7 +57,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     switch (rightMenuChoises.indexOf(choice)) {
       case 0:
         {
-          /// TODO: implement the feature
+          ArticlesRepo.of(context).bloc.cleanFav();
           userMessage = "Favourites deleted!";
         }
         break;
@@ -156,14 +155,20 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
           stream: bloc.articlesStream,
           builder: _buildList),
 
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) => bloc.changeScreen(index),
-        items: [
-          BottomNavigationBarItem(
-              title: Text("News"), icon: Icon(Icons.new_releases)),
-          BottomNavigationBarItem(
-              title: Text("Favourites"), icon: Icon(Icons.label_important)),
-        ],
+      bottomNavigationBar: StreamBuilder<ArticlesBlocState>(
+        stream: bloc.articlesStream,
+        builder: (context, snapshot) {
+          return BottomNavigationBar(
+            onTap: (index) => bloc.changeScreen(index),
+            currentIndex: bloc.getCurrentState().bottomIndex,
+            items: [
+              BottomNavigationBarItem(
+                  title: Text("News"), icon: Icon(Icons.new_releases)),
+              BottomNavigationBarItem(
+                  title: Text("Favourites"), icon: Icon(Icons.label_important)),
+            ],
+          );
+        }
       ),
     );
   }
@@ -200,6 +205,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       }).toList(),
     );
   }
+
   Widget topBar(AppScreen appScreen) {
       switch (appScreen) {
         case AppScreen.favorites:

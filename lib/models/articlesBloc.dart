@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:hive/hive.dart';
 import 'package:hotnews/models/article.dart';
 import 'package:hotnews/services/db_repo.dart';
 import 'package:hotnews/services/api.dart';
+
+import '../main.dart';
 
 
 enum AppScreen { main, favorites }
@@ -35,8 +38,6 @@ class ArticlesBloc {
   CategoriesEnum _actualCategory = CategoriesEnum.general;
   AppScreen _actualScreen = AppScreen.main;
 
-
-  bool _onlyFav=false;
   StreamSubscription<Article> _fetchArticlesSub;
 
   final _articlesController = StreamController<ArticlesBlocState>.broadcast();
@@ -47,13 +48,14 @@ class ArticlesBloc {
   Stream<AppScreen> get actualScreen => _actualScreenController.stream;
   Stream<ArticlesBlocState> get articlesStream => _articlesController.stream;
 
-  changeScreen(int index) {
+  void changeScreen(int index) {
+    _currentState.bottomIndex = index;
     _actualScreen = AppScreen.values[index];
     _actualScreenController.sink.add(_actualScreen);
     _manageArticles();
   }
 
-  _manageArticles(){
+  void _manageArticles(){
     if (AppScreen.favorites == _actualScreen) {
           _currentState.articlesMap[categoryName(_actualCategory)] = _dbRepository.getArticles();
           _currentState.loading = false;
@@ -64,7 +66,7 @@ class ArticlesBloc {
     }      
   }
 
-  changeCategory (int index){
+  void changeCategory (int index){
     _actualCategory = CategoriesEnum.values[index];
     //_articles.sink.add(null); //Clear news
     _screenController.sink.add(_actualCategory);
@@ -82,10 +84,6 @@ class ArticlesBloc {
     return _currentState;
   }
  
-  bool get onlyFav => _onlyFav;
-  set onlyFav(bool value) {
-    _onlyFav = value;
-  }
 
   String categoryName(CategoriesEnum category) =>
     category
@@ -108,6 +106,10 @@ class ArticlesBloc {
           _articlesController.add(_currentState);
           _articlesMap.addAll(_currentState.articlesMap);
     });
+  }
+
+  void favouritesChange(){
+    _articlesController.add(_currentState);
   }
 
   void startSearch() {
@@ -150,8 +152,16 @@ class ArticlesBloc {
     _articlesController?.close();
   }
 
+  void cleanFav() {
+    Box<Article> favoriteBox;
+    favoriteBox = Hive.box(NewsBox);
+    favoriteBox.clear();
+     _articlesController.add(_currentState);
+  }
+
 }
 class ArticlesBlocState {
+  int bottomIndex=0;
   bool loading;
   Map<String, List<Article>> articlesMap = Map();
 
