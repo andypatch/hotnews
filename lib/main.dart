@@ -9,7 +9,9 @@ import 'package:hotnews/models/articlesRepo.dart';
 import 'package:hotnews/screens/animations.dart';
 import 'package:hotnews/screens/bimbi/bimbi.dart';
 import 'package:hotnews/screens/map/firstmap.dart';
+import 'bimbi/screens/b_customerlist.dart';
 import 'bimbi/screens/b_home.dart';
+import 'bimbi/screens/b_maps.dart';
 import 'common/theme.dart';
 import 'screens/home.dart';
 import 'screens/bimbi/mockup.dart';
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           ///'/': (context) => MyHome(),
-          '/': (context) => bHome(),
+          '/': (context) => bCustomerList(),
         },
       ),
     );

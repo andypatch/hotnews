@@ -17,7 +17,7 @@ class _bHomeState extends State<bHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BappBar(),
+      appBar: BappBar("Home"),
       body: Container(
         padding: EdgeInsets.all(16),
         color: Colors.grey[300],

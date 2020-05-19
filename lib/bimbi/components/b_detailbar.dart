@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 
-class BappBar extends StatefulWidget  implements PreferredSizeWidget {
-  String title="";
+class BdetailBar extends StatefulWidget  implements PreferredSizeWidget {
 
-  BappBar(this.title) {}
   @override
-  _BappBarState createState() => _BappBarState();
+  _BdetailBarState createState() => _BdetailBarState();
+  String pageTitle="";
+
+  BdetailBar(this.pageTitle);
 
   Size get preferredSize {
     return new Size.fromHeight(50.0);
@@ -14,22 +15,20 @@ class BappBar extends StatefulWidget  implements PreferredSizeWidget {
 
 }
 
-class _BappBarState extends State<BappBar> {
+class _BdetailBarState extends State<BdetailBar> {
   @override
   Widget build(BuildContext context) {
     return  AppBar(
         backgroundColor: Colors.white,
         title: Row(
           children: <Widget>[
-            Container(
-                height: 22,
-                child: Image(
-                  image: AssetImage('assets/bimby.png'),
-                )),
+            Text("",
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold)),
             Expanded(
               child: Container(),
             ),
-            Text(widget.title,
+            Text(widget.pageTitle,
                 style: TextStyle(
                     color: Colors.black, fontWeight: FontWeight.bold)),
             Expanded(
