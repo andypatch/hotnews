@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_google_maps/flutter_google_maps.dart';
 import 'package:hotnews/bimbi/components/b_detailbar.dart';
-import 'package:hotnews/bimbi/components/container_bimby.dart';
+import 'package:hotnews/bimbi/components/b_container_bimby.dart';
 
 class b_MapDetail extends StatefulWidget {
   @override

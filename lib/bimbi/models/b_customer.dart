@@ -4,7 +4,7 @@ import 'package:crypto/crypto.dart';
 
 enum Category { all, accessories, clothing, home, }
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 1)
 class Customer extends HiveObject{
   // hive non vuole final
   @HiveField(0)
@@ -48,7 +48,7 @@ class Customer extends HiveObject{
 
   factory Customer.fromJson(Map<String, dynamic> json) {
     return new Customer(
-        id: toMd5(json['url']),
+        id: json['id'],
         firstName: json['firstName'],
         surName: json['surName'],
         address: json['address'],
@@ -93,7 +93,7 @@ class CustomerAdapter extends TypeAdapter<Customer>{
   }
 
   @override 
-  int get typeId => 0;
+  int get typeId => 1;
 
   @override 
   void write(BinaryWriter writer, Customer obj) {

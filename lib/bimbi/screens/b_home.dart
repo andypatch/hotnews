@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hotnews/bimbi/components/b_appbar.dart';
 import 'package:hotnews/bimbi/components/b_bottombar.dart';
-import 'package:hotnews/bimbi/components/container_bimby.dart';
+import 'package:hotnews/bimbi/components/b_container_bimby.dart';
 
 class bHome extends StatefulWidget  {
   bHome({Key key}) : super(key: key);

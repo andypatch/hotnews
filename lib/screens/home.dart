@@ -178,7 +178,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       .toList();
 
   Widget _buildList(
-      BuildContext context, AsyncSnapshot<ArticlesBlocState> snapshot) {
+    BuildContext context, AsyncSnapshot<ArticlesBlocState> snapshot) {
     if (snapshot.data.loading) {
       return Center(
         child: CircularProgressIndicator(),
