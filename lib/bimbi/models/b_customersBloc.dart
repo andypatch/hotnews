@@ -4,29 +4,19 @@ import 'package:hotnews/bimbi/models/b_customer.dart';
 import 'package:hotnews/bimbi/services/b_api.dart';
 import 'package:hotnews/bimbi/services/b_db_bimbi.dart';
 
-
 import '../../main.dart';
-
 
 enum AppScreen { main, favorites }
 
-enum CategoriesEnum {
-  lista,
-  dalavorare
-}
+enum CategoriesEnum { lista, dalavorare }
 
 // interessante
 String categoryName(CategoriesEnum category) =>
-    category
-        .toString()
-        .split('.')
-        .last;
-
+    category.toString().split('.').last;
 
 class CustomersBloc {
-  
   CustomersBlocState _currentState;
-  
+
   final DbBimbi _dbRepository = DbBimbi();
   final Map<String, List<Customer>> _customerMap = Map();
   final Map<String, List<Customer>> _customerMapSafeCopy = Map();
@@ -51,94 +41,91 @@ class CustomersBloc {
     _manageArticles();
   }
 
-  void _manageArticles(){
+  void _manageArticles() {
     if (AppScreen.favorites == _actualScreen) {
-          _currentState.customerMap[categoryName(_actualCategory)] = _dbRepository.getCustomers();
-          _currentState.loading = false;
-          _customersController.add(_currentState);      
-    }
-    else {
+      _currentState.customerMap[categoryName(_actualCategory)] = DbBimbi().getCustomers();
+      _currentState.loading = false;
+      _customersController.add(_currentState);
+    } else {
       fetchCustomers();
-    }      
+    }
   }
 
-  void changeCategory (int index){
-    _actualCategory = CategoriesEnum.values[index];
-    //_articles.sink.add(null); //Clear news
-    _screenController.sink.add(_actualCategory);
-    fetchCustomers(); 
+  void changeCategory(int index) {
+    if (index == 1) {
+      _actualCategory = CategoriesEnum.values[index];
+      //_articles.sink.add(null); //Clear news
+      _screenController.sink.add(_actualCategory);
+      _currentState.customerMap[categoryName(_actualCategory)] = DbBimbi().getCustomers();
+      _currentState.loading = false;
+      _customersController.add(_currentState);            
+    } else {
+      _actualCategory = CategoriesEnum.values[index];
+      //_articles.sink.add(null); //Clear news
+      _screenController.sink.add(_actualCategory);
+      fetchCustomers();
+    }
   }
 
-  CustomersBloc(){
+  CustomersBloc() {
     _currentState = CustomersBlocState.empty();
-    _dbRepository.watch().forEach((element){
-      print ("Update" + element.toString());
+    _dbRepository.watch().forEach((element) {
+      print("Update" + element.toString());
     });
   }
+
   /// current state getter
   CustomersBlocState getCurrentState() {
     return _currentState;
   }
- 
 
   String categoryName(CategoriesEnum category) =>
-    category
-        .toString()
-        .split('.')
-        .last;
+      category.toString().split('.').last;
 
   void fetchCustomers() {
     _fetchArticlesSub?.cancel();
     _currentState.loading = true;
     _customersController.add(_currentState);
 
-    BApi().fetchCustomers(categoryName(_actualCategory))
+    BApi()
+        .fetchCustomers(categoryName(_actualCategory))
         .asStream()
         .listen((dynamic result) {
-          if (result is List<Customer>) {
-            _currentState.customerMap[categoryName(_actualCategory)] = result;
-          }
-          _currentState.loading = false;
-          _customersController.add(_currentState);
-          _customerMap.addAll(_currentState.customerMap);
+      if (result is List<Customer>) {
+        _currentState.customerMap[categoryName(_actualCategory)] = result;
+      }
+      _currentState.loading = false;
+      _customersController.add(_currentState);
+      _customerMap.addAll(_currentState.customerMap);
     });
   }
 
-  void favouritesChange(){
+  void favouritesChange() {
     _customersController.add(_currentState);
   }
 
   void startSearch() {
     _customerMapSafeCopy.clear();
-    _customerMapSafeCopy.addAll(_customerMap);    
+    _customerMapSafeCopy.addAll(_customerMap);
   }
 
-  void stopSearch() {
-    _customerMap.clear();
-    _customerMap.addAll(_customerMapSafeCopy);    
-    _currentState.customerMap.clear();
-    _currentState.customerMap.addAll(_customerMap);
-    _customersController.add(_currentState);
-  }  
-  
 
-
-  dispose(){
+  dispose() {
     _screenController?.close();
     _actualScreenController?.close();
     _customersController?.close();
   }
 
-  void cleanFav() {
+  void cleanCustomerToWork() {
     Box<Customer> favoriteBox;
     favoriteBox = Hive.box(NewsBox);
     favoriteBox.clear();
-     _customersController.add(_currentState);
+    _customersController.add(_currentState);
   }
-
 }
+
 class CustomersBlocState {
-  int bottomIndex=0;
+  int bottomIndex = 0;
   bool loading;
   Map<String, List<Customer>> customerMap = Map();
 
@@ -147,7 +134,5 @@ class CustomersBlocState {
   CustomersBlocState.empty() {
     loading = false;
     customerMap = Map();
-  }  
-  
+  }
 }
-
