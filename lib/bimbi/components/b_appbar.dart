@@ -10,7 +10,7 @@ class BappBar extends StatefulWidget implements PreferredSizeWidget {
   _BappBarState createState() => _BappBarState();
 
   Size get preferredSize {
-    return new Size.fromHeight(350);
+    return new Size.fromHeight(50);
   }
 }
 
@@ -23,9 +23,9 @@ class _BappBarState extends State<BappBar> {
       title: Row(
         children: <Widget>[
           Container(
-              height: 22,
+              height: 18,
               child: Image(
-                image: AssetImage('assets/bimby.png'),
+               image: AssetImage('assets/bimby.png'),
               )),
           Expanded(
             child: Container(),

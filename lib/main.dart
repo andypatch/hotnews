@@ -11,12 +11,14 @@ import 'package:hotnews/screens/animations.dart';
 import 'package:hotnews/screens/bimbi/bimbi.dart';
 import 'package:hotnews/screens/map/firstmap.dart';
 import 'bimbi/models/b_customersRepo.dart';
+import 'bimbi/screens/b_customer_detail.dart';
 import 'bimbi/screens/b_customerlist.dart';
 import 'bimbi/screens/b_home.dart';
 import 'bimbi/screens/b_maps.dart';
 import 'common/theme.dart';
 import 'screens/home.dart';
 import 'screens/bimbi/mockup.dart';
+import 'bimbi/models/b_customer.dart';
 
 
 
@@ -54,6 +56,7 @@ class MyApp extends StatelessWidget {
         routes: {
           ///'/': (context) => MyHome(),
           '/': (context) => bCustomerList(),
+          
         },
       ),
     );
