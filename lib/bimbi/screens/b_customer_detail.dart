@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hotnews/bimbi/components/b_appbar.dart';
 import 'package:hotnews/bimbi/components/b_appbarcust.dart';
+import 'package:hotnews/bimbi/components/b_customer_orders_tab.dart';
 import 'package:hotnews/bimbi/models/b_customer.dart';
 import 'package:hotnews/bimbi/models/b_customersBloc.dart';
 import 'package:hotnews/bimbi/models/b_customersRepo.dart';
@@ -100,7 +101,7 @@ class _CustomerDetailState extends State<CustomerDetail>
     return TabBarView(
       controller: _tabController,
       children: customerTabsList.map<Widget>((Tab tab) {
-        return customerAnagTab(widget.customerSelected);
+        return tab.text=='ANAGRAFICA' ? customerAnagTab(widget.customerSelected) :customerOrdersTab(widget.customerSelected);
       }).toList(),
     );
   }

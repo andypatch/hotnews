@@ -34,6 +34,12 @@ class Customer extends HiveObject{
   @HiveField(8)
   String email;  
 
+  @HiveField(9)
+  String lat; 
+
+  @HiveField(10)
+  String lon;   
+
    Customer({
      this.id,
      this.firstName,
@@ -43,7 +49,9 @@ class Customer extends HiveObject{
      this.zipCode,
      this.city,
      this.phone,
-     this.email
+     this.email,
+     this.lat,
+     this.lon
   });  
 
   factory Customer.fromJson(Map<String, dynamic> json) {
@@ -56,7 +64,9 @@ class Customer extends HiveObject{
         zipCode: json['zipCode'],
         city: json['city'],
         phone: json['phone'],
-        email: json['email']);
+        email: json['email'],
+        lat: json['lat'],
+        lon: json['lon']);                
   }
 
   Map<String, dynamic> toJson() => {
@@ -68,7 +78,9 @@ class Customer extends HiveObject{
         'zipCode': zipCode,
         'city': city,
         'phone': phone,
-        'email': email
+        'email': email,
+        'lat': lat,
+        'lon': lon
       };
 
   static String toMd5(String json) {
@@ -89,7 +101,9 @@ class CustomerAdapter extends TypeAdapter<Customer>{
         ..zipCode = reader.read()
         ..city = reader.read()
         ..phone = reader.read()
-        ..email = reader.read();
+        ..email = reader.read()
+        ..lat = reader.read()
+        ..lon = reader.read();
   }
 
   @override 
@@ -106,6 +120,8 @@ class CustomerAdapter extends TypeAdapter<Customer>{
       writer.write(obj.city);
       writer.write(obj.phone);
       writer.write(obj.email);
+      writer.write(obj.lat);
+      writer.write(obj.lon);
     }
 
 

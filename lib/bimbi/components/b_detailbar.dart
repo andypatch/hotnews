@@ -20,25 +20,14 @@ class _BdetailBarState extends State<BdetailBar> {
   Widget build(BuildContext context) {
     return  AppBar(
         backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        centerTitle: true,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("",
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold)),
-            Expanded(
-              child: Container(),
-            ),
             Text(widget.pageTitle,
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold)),
-            Expanded(
-              child: Container(),
-            ),
-            Text("",
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold)),
-            SizedBox(width: 12),
-            Text("",
                 style: TextStyle(
                     color: Colors.black, fontWeight: FontWeight.bold)),
           ],

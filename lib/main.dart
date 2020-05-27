@@ -26,13 +26,15 @@ import 'bimbi/models/b_customer.dart';
 const String NewsBox = "NewsBox";
 const String CustomerToWorkBox = "CustBox";
 void main() async{
-  
+
   /// Hive initializing
   await Hive.initFlutter();
   Hive.registerAdapter(ArticleAdapter());
   Hive.registerAdapter(CustomerAdapter());
+
   await Hive.openBox<Article>(NewsBox);
   await Hive.openBox<Customer>(CustomerToWorkBox);
+
   
   /// GMaps initializing
   GoogleMap.init('AIzaSyDrIYsRnH2sDGDuedlv_Sy2J1rxmo6SWTk');

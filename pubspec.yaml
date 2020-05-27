@@ -36,8 +36,7 @@ dependencies:
   hive: ^1.4.1+1
   hive_flutter: ^0.3.0+2
   flutter_google_maps: ^3.7.0
-
-
+  url_launcher: ^5.4.10
 
 #dev_dependencies:
   #flutter_test:

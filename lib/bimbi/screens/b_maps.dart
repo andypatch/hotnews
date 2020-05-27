@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_google_maps/flutter_google_maps.dart';
 import 'package:hotnews/bimbi/components/b_detailbar.dart';
 import 'package:hotnews/bimbi/components/b_container_bimby.dart';
+import 'package:hotnews/bimbi/models/b_customer.dart';
 
 class b_MapDetail extends StatefulWidget {
+  final Customer customerSelected;
+
+  b_MapDetail(this.customerSelected);
   @override
   _b_MapDetailState createState() => _b_MapDetailState();
 }
@@ -15,50 +19,61 @@ class _b_MapDetailState extends State<b_MapDetail> {
   bool _darkMapStyle = false;
   String _mapStyle;
 
-  List<Widget> _buildInfo() => [
-        Column(children: <Widget>[
-          Container(
-            child: Row(children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text("",
-                      style: TextStyle(
-                          color: Colors.green[700],
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
-              SizedBox(width: 10),
-              Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+  Widget _buildInfo() => Column(
+        children: <Widget>[
+          ContainerBimby(
+            Column(children: <Widget>[
+              Container(
+                child: Column(
                   children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        "GUERRA ANNALISA",
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
+                    Row(children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text("",
+                              style: TextStyle(
+                                  color: Colors.green[700],
+                                  fontWeight: FontWeight.bold)),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 2),
-                    Flexible(
-                      child: Text(
-                        "Viale Vesuvio, 18 - 20128 Milano",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ]),
+                      SizedBox(width: 10),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                "GUERRA ANNALISAAAA",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Flexible(
+                              child: Text(
+                                "Viale Vesuvio, 18 - 20128 Milano",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ]),
+                    ]),
+                  ],
+                ),
+              ),
             ]),
           ),
-          Container(
-            child: Row(
-              children: <Widget>[
+          ContainerBimby(
+            Row(children: <Widget>[
               RaisedButton(
                 color: Colors.green[700],
                 textColor: Colors.white,
-                child: Text(
-                  "Open in Google Maps",
-                  style: TextStyle(fontSize: 12),
+                child: SizedBox(
+                  width: 310,
+                  child: Text(
+                    "Open in Google Maps",                    
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ),
                 onPressed: () {
                   GoogleMap.of(_key).clearPolygons();
@@ -66,9 +81,9 @@ class _b_MapDetailState extends State<b_MapDetail> {
                 },
               ),
             ]),
-          ),
-        ]),
-      ];
+          )
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +92,9 @@ class _b_MapDetailState extends State<b_MapDetail> {
       body: Stack(children: <Widget>[
         GoogleMap(
             key: _key,
-            initialPosition: GeoCoord(34, -118),
-            initialZoom: 12,
+            initialPosition: GeoCoord(double.parse(widget.customerSelected.lat),
+                double.parse(widget.customerSelected.lon)),
+            initialZoom: 14,
             mapType: MapType.roadmap,
             interactive: true,
             markers: {
@@ -91,9 +107,7 @@ class _b_MapDetailState extends State<b_MapDetail> {
           ///kIsWeb ? 60 : 16,
           bottom: 16,
 
-          child: ContainerBimby(
-            Row(children: _buildInfo()),
-          ),
+          child: _buildInfo(),
         ),
       ]),
     );
