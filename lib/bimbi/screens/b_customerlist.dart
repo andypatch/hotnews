@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hotnews/bimbi/components/b_account_info.dart';
 import 'package:hotnews/bimbi/components/b_appbar.dart';
 import 'package:hotnews/bimbi/components/b_bottombar.dart';
 import 'package:hotnews/bimbi/components/b_container_bimby.dart';
@@ -60,14 +61,20 @@ class _bCustomerListState extends State<bCustomerList>
     }
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         title: Row(
           children: <Widget>[
-            Container(
-                height: 26,
-                child: Image(
-                  image: AssetImage('assets/bimby.png'),
-                )),
+            new GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                  height: 24,
+                  child: Image(
+                    image: AssetImage('assets/bimby.png'),
+                  )),
+            ),
             Expanded(
               child: Container(),
             ),
@@ -77,9 +84,14 @@ class _bCustomerListState extends State<bCustomerList>
             Expanded(
               child: Container(),
             ),
-            Text("",
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold)),
+            new GestureDetector(
+              onTap: () {
+                return buildAccountInfo(context).show();
+              },
+              child: Text("",
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold)),
+            ),
             SizedBox(width: 12),
             Text("",
                 style: TextStyle(
@@ -92,9 +104,9 @@ class _bCustomerListState extends State<bCustomerList>
             stream: bloc.actualScreen,
             builder: (context, AsyncSnapshot<AppScreen> snapshot) {
               return Container(
-                height:40,
+                height: 40,
                 child: TabBar(
-                  indicatorColor:  Colors.green[700],
+                  indicatorColor: Colors.green[700],
                   isScrollable: false,
                   labelColor: Colors.green[700],
                   tabs: categories,

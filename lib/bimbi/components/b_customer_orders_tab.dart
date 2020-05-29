@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hotnews/bimbi/models/b_customer.dart';
 
+import 'b_activity_table.dart';
+import 'b_bustomer_status_row.dart';
+import 'b_buttom_buttons.dart';
 import 'b_container_bimby.dart';
 
 class customerOrdersTab extends StatelessWidget {
@@ -143,7 +146,7 @@ class customerOrdersTab extends StatelessWidget {
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
               BoxShadow(color: Colors.grey, offset: Offset(0.0, 1.0))
             ]),
-            height: 240,
+            height: 225,
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
@@ -191,229 +194,17 @@ class customerOrdersTab extends StatelessWidget {
                   SizedBox(
                     height: 5,
                   ),
-                  Table(
-                    border: TableBorder.all(
-                        color: Colors.grey,
-                        width: 0,
-                        style: BorderStyle.solid),
-                    children: [
-                      TableRow(children: [
-                        TableCell(
-                          child: Container(
-                              height: 30,
-                              color: Colors.black,
-                              child: Center(
-                                  child: Text('Attività',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14.0)))),
-                        ),
-                        TableCell(
-                          child: Container(
-                              height: 30,
-                              color: Colors.black,
-                              child: Center(
-                                  child: Text('Tot',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14.0)))),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        TableCell(
-                            child: Container(
-                                padding: EdgeInsets.all(5),
-                                height: 30,
-                                child: Text('Dimostrazioni',
-                                    style: TextStyle(fontSize: 14.0)))),
-                        TableCell(
-                          child: Container(
-                              color: Colors.grey[100],
-                              height: 30,
-                              child: Center(
-                                  child: Text('0',
-                                      style: TextStyle(fontSize: 14.0)))),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        TableCell(
-                            child: Container(
-                                padding: EdgeInsets.all(5),                              
-                                height: 30,
-                                child: Text('Post Vendita',
-                                    style: TextStyle(fontSize: 14.0)))),
-                        TableCell(
-                          child: Container(
-                              color: Colors.grey[100],
-                              height: 30,
-                              child: Center(
-                                  child: Text('0',
-                                      style: TextStyle(fontSize: 14.0)))),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        TableCell(
-                            child: Container(
-                                padding: EdgeInsets.all(5),                              
-                                height: 30,
-                                child: Text('Laboratori a casa',
-                                    style: TextStyle(fontSize: 14.0)))),
-                        TableCell(
-                          child: Container(
-                              color: Colors.grey[100],
-                              height: 30,
-                              child: Center(
-                                  child: Text('0',
-                                      style: TextStyle(fontSize: 14.0)))),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        TableCell(
-                            child: Container(
-                                padding: EdgeInsets.all(5),                              
-                                height: 30,
-                                child: Text('Corsi di cucina',
-                                    style: TextStyle(fontSize: 14.0)))),
-                        TableCell(
-                          child: Container(
-                              color: Colors.grey[100],
-                              height: 30,
-                              child: Center(
-                                  child: Text('0',
-                                      style: TextStyle(fontSize: 14.0)))),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        TableCell(
-                            child: Container(
-                                padding: EdgeInsets.all(5),                              
-                                height: 30,
-                                child: Text('Fiere',
-                                    style: TextStyle(fontSize: 14.0)))),
-                        TableCell(
-                          child: Container(
-                              color: Colors.grey[100],
-                              height: 30,
-                              child: Center(
-                                  child: Text('0',
-                                      style: TextStyle(fontSize: 14.0)))),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        TableCell(
-                            child: Container(
-                                padding: EdgeInsets.all(5),                              
-                                height: 30,
-                                child: Text('Visite',
-                                    style: TextStyle(fontSize: 14.0)))),
-                        TableCell(
-                          child: Container(
-                              color: Colors.grey[100],
-                              height: 30,
-                              child: Center(
-                                  child: Text('0',
-                                      style: TextStyle(fontSize: 14.0)))),
-                        ),
-                      ]),
-                      TableRow(children: [
-                        TableCell(
-                            child: Container(
-                                padding: EdgeInsets.all(5),                              
-                                height: 30,
-                                child: Text('Corsi di cucina con amico',
-                                    style: TextStyle(fontSize: 14.0)))),
-                        TableCell(
-                          child: Container(
-                              color: Colors.grey[100],
-                              height: 30,
-                              child: Center(
-                                  child: Text('0',
-                                      style: TextStyle(fontSize: 14.0)))),
-                        ),
-                      ]),
-                    ],
-                  ),
+                  b_activity_table(),
                 ],
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                MaterialButton(
-                  minWidth: 140,
-                  elevation: 5.0,
-                  padding: EdgeInsets.all(5.0),
-                  color: Colors.green[700],
-                  child: Text("Mail",
-                      style: TextStyle(color: Colors.white, fontSize: 14.0)),
-                  onPressed: _sendMail,
-                ),
-                MaterialButton(
-                  minWidth: 140,
-                  elevation: 5.0,
-                  color: Colors.green[700],
-                  padding: EdgeInsets.all(5.0),
-                  child: Text("Chiama",
-                      style: TextStyle(color: Colors.white, fontSize: 14.0)),
-                  onPressed: _phoneCall,
-                )
-              ],
-            ),
+          SizedBox(
+            height: 15,
           ),
+          b_bottom_buttons(customerSelected: customerSelected),
         ]),
       ),
     );
-  }
-
-  _sendMail() {}
-  _phoneCall() {}
-
-  Widget buildCustomerStatusRow() {
-    return Row(children: <Widget>[
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("", style: TextStyle(color: Colors.green[700], fontSize: 30)),
-          ],
-        ),
-      ),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("", style: TextStyle(color: Colors.grey, fontSize: 30)),
-          ],
-        ),
-      ),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("", style: TextStyle(color: Colors.grey, fontSize: 30)),
-          ],
-        ),
-      ),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("", style: TextStyle(color: Colors.grey, fontSize: 30)),
-          ],
-        ),
-      ),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("", style: TextStyle(color: Colors.grey, fontSize: 30)),
-          ],
-        ),
-      ),
-    ]);
   }
 }

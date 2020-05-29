@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:hotnews/bimbi/components/b_appbar.dart';
 import 'package:hotnews/bimbi/components/b_bottombar.dart';
 import 'package:hotnews/bimbi/components/b_container_bimby.dart';
+import 'package:hotnews/bimbi/screens/b_customerlist.dart';
 
-class bHome extends StatefulWidget  {
+class bHome extends StatefulWidget {
   bHome({Key key}) : super(key: key);
 
   @override
@@ -12,8 +13,6 @@ class bHome extends StatefulWidget  {
 }
 
 class _bHomeState extends State<bHome> {
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,14 +87,22 @@ class _bHomeState extends State<bHome> {
                   ]),
                 ),
                 Positioned(
-                    right: 0,
-                    bottom: 0,
-                    top: 0,
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      color: Colors.green[700],
-                      child: Icon(Icons.arrow_forward, color: Colors.white),
-                    ))
+                  right: 0,
+                  bottom: 0,
+                  top: 0,
+                  child: new GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => bCustomerList()));
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        color: Colors.green[700],
+                        child: Icon(Icons.arrow_forward, color: Colors.white),
+                      )),
+                )
               ],
             ),
           ],
@@ -105,7 +112,5 @@ class _bHomeState extends State<bHome> {
     );
   }
 }
-
-
 
 //Text("",style:  TextStyle(fontFamily: 'Bimby', fontSize: 30),)

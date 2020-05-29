@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class BbottomBar extends StatefulWidget {
-  
   const BbottomBar();
 
   @override
@@ -23,13 +22,11 @@ class _BbottomBarState extends State<BbottomBar> {
             Container(
               alignment:
                   bottomStatusOpen ? Alignment.topLeft : Alignment.centerLeft,
-              child: Flexible(
-                child: Text(
-                  "Vorwerk Bimby",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
+              child: Text(
+                "Vorwerk Bimby",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -46,14 +43,12 @@ class _BbottomBarState extends State<BbottomBar> {
                 alignment: bottomStatusOpen
                     ? Alignment.topLeft
                     : Alignment.centerRight,
-                child: Flexible(
-                  child: Text(
-                    bottomStatusOpen ? "Chiudi Footer" : "Apri footer",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.white,
-                    ),
+                child: Text(
+                  bottomStatusOpen ? "Chiudi Footer" : "Apri footer",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.white,
                   ),
                 ),
               ),

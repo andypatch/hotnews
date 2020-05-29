@@ -56,8 +56,8 @@ class MyApp extends StatelessWidget {
         theme: appTheme,
         initialRoute: '/',
         routes: {
-          ///'/': (context) => MyHome(),
-          '/': (context) => bCustomerList(),
+          '/': (context) => bHome(),
+          ///'/': (context) => bCustomerList(),
           
         },
       ),

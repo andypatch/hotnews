@@ -3,6 +3,7 @@ import 'package:flutter_google_maps/flutter_google_maps.dart';
 import 'package:hotnews/bimbi/components/b_detailbar.dart';
 import 'package:hotnews/bimbi/components/b_container_bimby.dart';
 import 'package:hotnews/bimbi/models/b_customer.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 class b_MapDetail extends StatefulWidget {
   final Customer customerSelected;
@@ -84,8 +85,16 @@ class _b_MapDetailState extends State<b_MapDetail> {
                   ),
                 ),
                 onPressed: () {
-                  GoogleMap.of(_key).clearPolygons();
-                  setState(() => _polygonAdded = false);
+                  MapsLauncher.launchCoordinates(
+                      double.parse(widget.customerSelected.lat),
+                      double.parse(widget.customerSelected.lon),
+                      widget.customerSelected.address +
+                          ", " +
+                          widget.customerSelected.civic +
+                          " " +
+                          widget.customerSelected.zipCode +
+                          " - " +
+                          widget.customerSelected.city);
                 },
               ),
             ]),
@@ -109,7 +118,7 @@ class _b_MapDetailState extends State<b_MapDetail> {
               Marker(
                   GeoCoord(double.parse(widget.customerSelected.lat),
                       double.parse(widget.customerSelected.lon)),
-                  info:widget.customerSelected.surName,
+                  info: widget.customerSelected.surName,
                   infoSnippet: widget.customerSelected.firstName),
             }),
         Positioned(

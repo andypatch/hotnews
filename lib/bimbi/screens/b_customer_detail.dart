@@ -63,6 +63,7 @@ class _CustomerDetailState extends State<CustomerDetail>
             Text("Scheda Cliente",
                 style: TextStyle(
                     color: Colors.black, fontWeight: FontWeight.bold)),
+                    SizedBox(width: 56,),
           ],
         ),
         bottom: PreferredSize(
