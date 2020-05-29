@@ -70,7 +70,7 @@ class _bCustomerListState extends State<bCustomerList>
                 Navigator.pop(context);
               },
               child: Container(
-                  height: 24,
+                  height: 18,
                   child: Image(
                     image: AssetImage('assets/bimby.png'),
                   )),
@@ -138,17 +138,16 @@ class _bCustomerListState extends State<bCustomerList>
 
       /// TODO: spiegare perchè senza <Widget> non funziona un cazzo
       children: categories.map<Widget>((Tab tab) {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: ListView.builder(
-              itemCount: snapshot.data.customerMap[tab.text.toLowerCase()] ==
-                      null
-                  ? 0
-                  : snapshot.data.customerMap[tab.text.toLowerCase()].length,
-              itemBuilder: (context, position) => CustomerItem(
-                  snapshot.data.customerMap[tab.text.toLowerCase()][position]),
-            ),
+        return Padding(
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: ListView.builder(
+            itemCount: snapshot.data.customerMap[tab.text.toLowerCase()] == null
+                ? 0
+                : snapshot.data.customerMap[tab.text.toLowerCase()].length + 1 ,
+            itemBuilder: (context, position) => position == 0
+                ? Text(" Totali: ${snapshot.data.customerMap[tab.text.toLowerCase()].length}") 
+                : CustomerItem(snapshot.data.customerMap[tab.text.toLowerCase()]
+                    [position -1 ]),
           ),
         );
       }).toList(),
