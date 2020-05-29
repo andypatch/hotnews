@@ -42,7 +42,9 @@ class _b_MapDetailState extends State<b_MapDetail> {
                           children: <Widget>[
                             Flexible(
                               child: Text(
-                                "GUERRA ANNALISAAAA",
+                                widget.customerSelected.firstName +
+                                    " " +
+                                    widget.customerSelected.surName,
                                 style: TextStyle(
                                   fontSize: 16,
                                 ),
@@ -51,7 +53,13 @@ class _b_MapDetailState extends State<b_MapDetail> {
                             SizedBox(height: 2),
                             Flexible(
                               child: Text(
-                                "Viale Vesuvio, 18 - 20128 Milano",
+                                widget.customerSelected.address +
+                                    ", " +
+                                    widget.customerSelected.civic +
+                                    " " +
+                                    widget.customerSelected.zipCode +
+                                    " - " +
+                                    widget.customerSelected.city,
                                 style: TextStyle(fontSize: 12),
                               ),
                             ),
@@ -70,7 +78,7 @@ class _b_MapDetailState extends State<b_MapDetail> {
                 child: SizedBox(
                   width: 310,
                   child: Text(
-                    "Open in Google Maps",                    
+                    "Open in Google Maps",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12),
                   ),
@@ -98,7 +106,11 @@ class _b_MapDetailState extends State<b_MapDetail> {
             mapType: MapType.roadmap,
             interactive: true,
             markers: {
-              Marker(GeoCoord(34, -118)),
+              Marker(
+                  GeoCoord(double.parse(widget.customerSelected.lat),
+                      double.parse(widget.customerSelected.lon)),
+                  info:widget.customerSelected.surName,
+                  infoSnippet: widget.customerSelected.firstName),
             }),
         Positioned(
           left: 16,
